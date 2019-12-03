@@ -1,0 +1,9 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/UE.Timetable/DesignTimeBuild
+/.vs/UE.Timetable/v16
+/UE.Timetable/bin/Debug/netcoreapp3.0
+/UE.Timetable/obj/Debug/netcoreapp3.0
+/UE.Timetable/obj

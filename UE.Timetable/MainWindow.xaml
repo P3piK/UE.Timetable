@@ -1,0 +1,26 @@
+﻿<Window x:Class="UE.Timetable.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:UE.Timetable"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="647">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="223*"/>
+            <RowDefinition Height="211*"/>
+        </Grid.RowDefinitions>
+        <Button x:Name="GetDataButton" Content="Get Data" HorizontalAlignment="Left" Margin="328,65,0,0" VerticalAlignment="Top" Height="36" Width="79" Click="GetDataButton_Click"/>
+        <TextBlock x:Name="dateFromBlock" HorizontalAlignment="Left" Margin="133,67,0,0" Text="Date from:" TextWrapping="Wrap" VerticalAlignment="Top" Width="81"/>
+        <TextBlock x:Name="dateToBlock" HorizontalAlignment="Left" Margin="133,140,0,0" Text="Date to:" TextWrapping="Wrap" VerticalAlignment="Top" Width="60"/>
+        <DatePicker x:Name="DateFromPicker" HorizontalAlignment="Left" Margin="133,88,0,0" VerticalAlignment="Top" Width="149"/>
+        <DatePicker x:Name="DateToPicker" HorizontalAlignment="Left" Margin="133,161,0,0" VerticalAlignment="Top" FirstDayOfWeek="Monday" IsTodayHighlighted="False" Width="149"/>
+        <TextBox x:Name="countBox" HorizontalAlignment="Left" Margin="324,185,0,0" Text="Count" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" IsEnabled="False"/>
+        <TextBox x:Name="responseBox" HorizontalAlignment="Left" Margin="133,10,0,0" Text="Response" TextWrapping="Wrap" VerticalAlignment="Top" Height="151" Width="395" Grid.Row="1" IsEnabled="False"/>
+        <Label x:Name="countLabel" Content="Count" HorizontalAlignment="Left" Margin="324,159,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="statusLabel" Content="Status" HorizontalAlignment="Left" Margin="324,112,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="statusBox" HorizontalAlignment="Left" Margin="324,138,0,0" Text="Status" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" IsEnabled="False"/>
+
+    </Grid>
+</Window>
