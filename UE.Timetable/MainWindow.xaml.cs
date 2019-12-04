@@ -21,9 +21,6 @@ namespace UE.Timetable
     /// </summary>
     public partial class MainWindow : Window
     {
-        private const string E_UCZELNIA_URL = "https://e-uczelnia.ue.katowice.pl/";
-        private const string HARMONOGRAM_ZAJECIA_URL = "wsrest/rest/phz/harmonogram/zajecia";
-
         public MainWindow()
         {
             InitializeComponent();
@@ -33,31 +30,14 @@ namespace UE.Timetable
         {
             statusBox.Text = "Pending...";
 
-            var client = new RestClient(E_UCZELNIA_URL);
-            var request = new RestRequest(HARMONOGRAM_ZAJECIA_URL, Method.GET);
-            AddParameters(request);
+            var manager = new TimetableManager(DateFromPicker.SelectedDate, DateToPicker.SelectedDate);
+            var response = manager.GetTimetable();
+            var data = manager.Deserialize(response.Data["result"].ToString());
 
-            var response = client.Execute<dynamic>(request);
             statusBox.Text = response.StatusCode.ToString();
             countBox.Text = response.Data["totalResultCount"].ToString();
             responseBox.Text = response.Data["result"].ToString();
         }
 
-        private void AddParameters(RestRequest request)
-        {
-            request.AddParameter("idGrupa", 44247);
-            request.AddParameter("idNauczyciel", 0);
-            request.AddParameter("widok", "STUDENT");
-            request.AddParameter("page", 1);
-            request.AddParameter("start", 0);
-            request.AddParameter("limit", 25);
-
-            if (DateFromPicker.SelectedDate.HasValue
-                && DateToPicker.SelectedDate.HasValue)
-            {
-                request.AddParameter("dataOd", DateFromPicker.SelectedDate.Value.ToString("yyyy-MM-dd"));
-                request.AddParameter("dataDo", DateToPicker.SelectedDate.Value.ToString("yyyy-MM-dd"));
-            }
-        }
     }
 }
