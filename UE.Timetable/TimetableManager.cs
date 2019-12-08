@@ -29,9 +29,9 @@ namespace UE.Timetable
             return client.Execute<Dictionary<string, object>>(request);
         }
 
-        public IEnumerable<Lesson> Deserialize(string data)
+        public IEnumerable<Course> Deserialize(string data)
         {
-            return JsonConvert.DeserializeObject<IEnumerable<Lesson>>(data);
+            return JsonConvert.DeserializeObject<IEnumerable<Course>>(data);
         }
 
         private void AddParameters(RestRequest request)
@@ -41,7 +41,7 @@ namespace UE.Timetable
             request.AddParameter("widok", "STUDENT");
             request.AddParameter("page", 1);
             request.AddParameter("start", 0);
-            request.AddParameter("limit", 25);
+            request.AddParameter("limit", 500);
 
             if (dateFrom.HasValue
                 && dateTo.HasValue)

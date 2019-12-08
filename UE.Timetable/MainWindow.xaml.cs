@@ -34,9 +34,12 @@ namespace UE.Timetable
             var response = manager.GetTimetable();
             var data = manager.Deserialize(response.Data["result"].ToString());
 
+            var calendarManager = new GoogleCalendarManager(data);
+            calendarManager.Run();
+
             statusBox.Text = response.StatusCode.ToString();
             countBox.Text = response.Data["totalResultCount"].ToString();
-            responseBox.Text = response.Data["result"].ToString();
+            responseBox.Text = data.ToString();
         }
 
     }
