@@ -1,4 +1,5 @@
-﻿using RestSharp;
+﻿using Newtonsoft.Json;
+using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using UE.Timetable.Controller;
+using UE.Timetable.Model;
 
 namespace UE.Timetable
 {
@@ -26,20 +29,22 @@ namespace UE.Timetable
             InitializeComponent();
         }
 
-        private void GetDataButton_Click(object sender, RoutedEventArgs e)
+        private async void GetDataButton_Click(object sender, RoutedEventArgs e)
         {
-            statusBox.Text = "Pending...";
+            statusBox.Text = "Getting timetable...";
 
             var manager = new TimetableManager(DateFromPicker.SelectedDate, DateToPicker.SelectedDate);
-            var response = manager.GetTimetable();
-            var data = manager.Deserialize(response.Data["result"].ToString());
+            var response = await manager.GetTimetable();
+            var content = await response.Content.ReadAsStringAsync();
+            var data = JsonConvert.DeserializeObject<ResponseContent>(content);
 
-            var calendarManager = new GoogleCalendarManager(data, DateFromPicker.SelectedDate, DateToPicker.SelectedDate);
-            calendarManager.Run();
+            responseBox.Text = content;
+            statusBox.Text = "Managing events...";
 
-            statusBox.Text = response.StatusCode.ToString();
-            countBox.Text = response.Data["totalResultCount"].ToString();
-            responseBox.Text = response.Data.ToString();
+            var calendarManager = new GoogleCalendarManager(data.Courses, DateFromPicker.SelectedDate, DateToPicker.SelectedDate);
+            await calendarManager.Run();
+
+            statusBox.Text = "Success";
         }
 
     }

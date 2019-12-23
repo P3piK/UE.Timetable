@@ -8,9 +8,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
+using UE.Timetable.Model;
 using static Google.Apis.Calendar.v3.Data.Event;
 
-namespace UE.Timetable
+namespace UE.Timetable.Controller
 {
     public class GoogleCalendarManager
     {
@@ -30,19 +32,19 @@ namespace UE.Timetable
         public DateTime? DateTo { get; }
         private UserCredential Credentials { get; set; }
 
-        public void Run()
+        public async Task Run()
         {
             using (var stream = new FileStream("credentials.json", FileMode.Open, FileAccess.Read))
             {
                 // The file token.json stores the user's access and refresh tokens, and is created
                 // automatically when the authorization flow completes for the first time.
                 string credPath = "token.json";
-                Credentials = GoogleWebAuthorizationBroker.AuthorizeAsync(
+                Credentials = await GoogleWebAuthorizationBroker.AuthorizeAsync(
                     GoogleClientSecrets.Load(stream).Secrets,
                     scopes,
                     "user",
                     CancellationToken.None,
-                    new FileDataStore(credPath, true)).Result;
+                    new FileDataStore(credPath, true));
             }
 
             var service = new CalendarService(new BaseClientService.Initializer()
@@ -51,14 +53,14 @@ namespace UE.Timetable
                 HttpClientInitializer = Credentials,
             });
 
-            var googleEvents = ListAllEvents(service);
-            DeleteAllEvents(service, googleEvents);
-            AddNewEvents(service);
+            var googleEvents = await ListAllEvents(service);
+            await DeleteAllEvents(service, googleEvents);
+            await AddNewEvents(service);
 
             service.Dispose();
         }
 
-        private void AddNewEvents(CalendarService service)
+        private async Task AddNewEvents(CalendarService service)
         {
             foreach (var ev in Events)
             {
@@ -69,12 +71,14 @@ namespace UE.Timetable
                     Description = ev.Tutor,
                     End = new EventDateTime() { DateTime = ev.DateTo },
                     Location = ev.Location,
-                    Reminders = null,
+                    Reminders = new RemindersData() { UseDefault = false, Overrides = new List<EventReminder>() },
                     //Source = new SourceData() { Title = APPLICATION_NAME },
                     Start = new EventDateTime() { DateTime = ev.DateFrom },
                     Summary = ev.Subject
                 }, CALENDAR_ID);
-                var ret = request.Execute();
+
+                var ret = await request.ExecuteAsync();
+                // Sth with ret?
             }
         }
 
@@ -92,16 +96,16 @@ namespace UE.Timetable
             return ret;
         }
 
-        private void DeleteAllEvents(CalendarService service, Events googleEvents)
+        private async Task DeleteAllEvents(CalendarService service, Events googleEvents)
         {
             foreach (var ev in googleEvents.Items)
             {
                 var request = service.Events.Delete(CALENDAR_ID, ev.Id);
-                request.Execute();
+                await request.ExecuteAsync();
             }
         }
 
-        private Events ListAllEvents(CalendarService service)
+        private async Task<Events> ListAllEvents(CalendarService service)
         {
             var request = service.Events.List(CALENDAR_ID);
             request.ShowDeleted = false;
@@ -111,7 +115,7 @@ namespace UE.Timetable
             request.TimeMax = DateTo;
             request.OrderBy = EventsResource.ListRequest.OrderByEnum.StartTime;
 
-            return request.Execute();
+            return await request.ExecuteAsync();
         }
     }
 }

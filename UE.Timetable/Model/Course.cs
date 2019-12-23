@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace UE.Timetable
+namespace UE.Timetable.Model
 {
     public class Course
     {
