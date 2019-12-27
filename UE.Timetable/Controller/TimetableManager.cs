@@ -33,8 +33,10 @@ namespace UE.Timetable.Controller
                 sb.Append(HARMONOGRAM_ZAJECIA_URL);
                 sb.Append(AddParameters());
                 var url = sb.ToString();
-                
-                return await client.GetAsync(url);
+                var ret = await client.GetAsync(url);
+                ret.EnsureSuccessStatusCode();
+
+                return ret;
             }
         }
 

@@ -8,6 +8,6 @@ namespace UE.Timetable.Model
     public class ResponseContent
     {
         [JsonProperty("result")]
-        public IEnumerable<Course> Courses { get; set; }
+        public IList<Course> Courses { get; set; }
     }
 }

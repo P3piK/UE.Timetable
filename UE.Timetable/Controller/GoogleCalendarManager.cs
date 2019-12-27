@@ -52,17 +52,16 @@ namespace UE.Timetable.Controller
                 ApplicationName = APPLICATION_NAME,
                 HttpClientInitializer = Credentials,
             });
-
             var googleEvents = await ListAllEvents(service);
-            await DeleteAllEvents(service, googleEvents);
-            await AddNewEvents(service);
+            DeleteAllEvents(service, googleEvents);
+            AddNewEvents(service);
 
             service.Dispose();
         }
 
-        private async Task AddNewEvents(CalendarService service)
+        private void AddNewEvents(CalendarService service)
         {
-            foreach (var ev in Events)
+            Parallel.ForEach(Events, async (ev) =>
             {
                 var request = service.Events.Insert(new Event()
                 {
@@ -79,7 +78,7 @@ namespace UE.Timetable.Controller
 
                 var ret = await request.ExecuteAsync();
                 // Sth with ret?
-            }
+            });
         }
 
         private string GetColor(Course ev)
@@ -96,13 +95,13 @@ namespace UE.Timetable.Controller
             return ret;
         }
 
-        private async Task DeleteAllEvents(CalendarService service, Events googleEvents)
+        private void DeleteAllEvents(CalendarService service, Events googleEvents)
         {
-            foreach (var ev in googleEvents.Items)
+            Parallel.ForEach(googleEvents.Items, async (ev) =>
             {
                 var request = service.Events.Delete(CALENDAR_ID, ev.Id);
                 await request.ExecuteAsync();
-            }
+            });
         }
 
         private async Task<Events> ListAllEvents(CalendarService service)
